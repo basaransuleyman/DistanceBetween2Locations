@@ -1,4 +1,4 @@
-package com.example.maps
+package com.example.maps.ui
 
 import android.Manifest
 import android.app.Application
