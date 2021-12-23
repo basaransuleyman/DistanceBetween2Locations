@@ -23,10 +23,10 @@ import com.google.android.gms.maps.model.Marker
 import java.io.IOException
 import kotlin.math.floor
 
-class DistanceBeetween2LocationWithoutDIandVM : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+class WithoutDIandVMActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
     private lateinit var mMap: GoogleMap
-    private lateinit var binding: ActivityMapsBinding
+    private lateinit var binding: WithoutDIandVMActivityMapsBinding
     private lateinit var lastLocation: Location
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
@@ -72,10 +72,10 @@ class DistanceBeetween2LocationWithoutDIandVM : AppCompatActivity(), OnMapReadyC
             val markerOptions = MarkerOptions()
             val location = target.text.toString()
 
-            if (location != "") {
+            if (location!! != "") {
                 val geocoder = Geocoder(applicationContext)
                 try {
-                    addressList = geocoder.getFromLocationName(location, MAX_ADDRESS_RESULT)
+                    addressList = geocoder.getFromLocationName(location!!, MAX_ADDRESS_RESULT)
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
@@ -99,14 +99,14 @@ class DistanceBeetween2LocationWithoutDIandVM : AppCompatActivity(), OnMapReadyC
                         val roundResult = floor((resultFirst * ARRAY_SIZE))
                         val distance = "$roundResult km "
                         val hourToDistance =
-                            (result[ZERO] / A_THOUSAND * HOUR_TO_KM).toString() + "min"
+                            round(result[ZERO] / A_THOUSAND * HOUR_TO_KM).toString() + "min"
 
                         origin = MarkerOptions().position(LatLng(startLatitude, startLongitude))
                         destination = MarkerOptions().position(LatLng(endLatitude, endLongitude))
-                        mMap.addMarker(markerOptions)
-                        mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng))
-                        mMap.addMarker(destination!!)
-                        mMap.addMarker(origin!!)
+                        mMap!!.addMarker(markerOptions)
+                        mMap!!.animateCamera(CameraUpdateFactory.newLatLng(latLng))
+                        mMap!!.addMarker(destination!!)
+                        mMap!!.addMarker(origin!!)
 
                         binding.tvKm.text = distance
                         binding.tvTime.text = hourToDistance
@@ -130,14 +130,14 @@ class DistanceBeetween2LocationWithoutDIandVM : AppCompatActivity(), OnMapReadyC
         }
         mMap.isMyLocationEnabled = true
         fusedLocationClient.lastLocation.addOnSuccessListener(this) { location ->
-            location.let {
-                lastLocation = location
-                val currentLatLong = LatLng(location.latitude, location.longitude)
+            location?.let {
+                lastLocation = location!!
+                val currentLatLong = LatLng(location!!.latitude, location!!.longitude)
                 markerOnMap(currentLatLong)
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLong, CAMERA_ZOOM))
 
-                startLatitude = location.latitude
-                startLongitude = location.longitude
+                startLatitude = location!!.latitude
+                startLongitude = location!!.longitude
             }
         }
     }
