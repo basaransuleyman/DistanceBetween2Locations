@@ -39,6 +39,7 @@ class WithoutDIandVMActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMa
         private const val CAMERA_ZOOM = 12f
         private const val MAX_ADDRESS_RESULT = 5
         private const val ARRAY_SIZE = 10
+        private const val EMPTY_STRING = " "
     }
 
     var endLatitude = FIRST_LONG_AND_LAT
@@ -72,7 +73,7 @@ class WithoutDIandVMActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMa
             val markerOptions = MarkerOptions()
             val location = target.text.toString()
 
-            if (location!! != "") {
+            if (location != EMPTY_STRING) {
                 val geocoder = Geocoder(applicationContext)
                 try {
                     addressList = geocoder.getFromLocationName(location!!, MAX_ADDRESS_RESULT)
@@ -103,10 +104,10 @@ class WithoutDIandVMActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMa
 
                         origin = MarkerOptions().position(LatLng(startLatitude, startLongitude))
                         destination = MarkerOptions().position(LatLng(endLatitude, endLongitude))
-                        mMap!!.addMarker(markerOptions)
-                        mMap!!.animateCamera(CameraUpdateFactory.newLatLng(latLng))
-                        mMap!!.addMarker(destination!!)
-                        mMap!!.addMarker(origin!!)
+                        mMap.addMarker(markerOptions)
+                        mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng))
+                        mMap.addMarker(destination!!)
+                        mMap.addMarker(origin!!)
 
                         binding.tvKm.text = distance
                         binding.tvTime.text = hourToDistance
