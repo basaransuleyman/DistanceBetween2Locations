@@ -28,8 +28,8 @@ class ViewModel(application: Application) : AndroidViewModel(application) {
     var startLongitude = MapsActivity.FIRST_LONG_AND_LAT
     var origin: MarkerOptions? = null
     var destination: MarkerOptions? = null
-    var distance = 0
-    var hourToDistance = 0
+    var distance = MapsActivity.ZERO
+    var hourToDistance = MapsActivity.ZERO
 
     fun setupMap(googleMap: GoogleMap, context: Context) {
         mMap = googleMap
@@ -50,11 +50,16 @@ class ViewModel(application: Application) : AndroidViewModel(application) {
         }
         mMap.isMyLocationEnabled = true
         fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-            location?.let {
+            location.let {
                 lastLocation = location
                 val currentLatLong = LatLng(location.latitude, location.longitude)
                 markerOnMap(currentLatLong)
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLong, 12f))
+                mMap.animateCamera(
+                    CameraUpdateFactory.newLatLngZoom(
+                        currentLatLong,
+                        MapsActivity.CAMERA_ZOOM
+                    )
+                )
 
                 startLatitude = location.latitude
                 startLongitude = location.longitude
@@ -62,7 +67,7 @@ class ViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun markerOnMap(currentLatLong: LatLng) {
+    private fun markerOnMap(currentLatLong: LatLng) {
         val markerOptions = MarkerOptions().position(currentLatLong)
         markerOptions.title("$currentLatLong")
         mMap.addMarker(markerOptions)
@@ -72,7 +77,6 @@ class ViewModel(application: Application) : AndroidViewModel(application) {
         val addressList: List<Address>? = null
         val markerOptions = MarkerOptions()
 
-
         if (addressList != null) {
             for (i in addressList.indices) {
                 val myAddress = addressList[i]
@@ -81,7 +85,7 @@ class ViewModel(application: Application) : AndroidViewModel(application) {
                 endLatitude = myAddress.latitude
                 endLongitude = myAddress.longitude
 
-                val result = FloatArray(10)
+                val result = FloatArray(MapsActivity.ARRAY_SIZE)
                 Location.distanceBetween(
                     startLatitude,
                     startLongitude,
@@ -90,16 +94,17 @@ class ViewModel(application: Application) : AndroidViewModel(application) {
                     result
                 )
 
-                val roundResult = (result[0] / 1000).roundToInt()
+                val roundResult =
+                    (result[MapsActivity.ZERO] / MapsActivity.ONE_THOUSAND).roundToInt()
                 distance = roundResult
                 hourToDistance = (roundResult * MapsActivity.HOUR_TO_KM).toInt()
 
                 origin = MarkerOptions().position(LatLng(startLatitude, startLongitude))
                 destination = MarkerOptions().position(LatLng(endLatitude, endLongitude))
-                mMap!!.addMarker(markerOptions)
-                mMap!!.animateCamera(CameraUpdateFactory.newLatLng(latLng))
-                mMap!!.addMarker(destination!!)
-                mMap!!.addMarker(origin!!)
+                mMap.addMarker(markerOptions)
+                mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng))
+                mMap.addMarker(destination!!)
+                mMap.addMarker(origin!!)
             }
         }
     }

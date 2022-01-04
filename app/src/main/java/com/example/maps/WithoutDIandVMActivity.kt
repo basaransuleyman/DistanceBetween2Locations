@@ -9,24 +9,26 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import androidx.core.app.ActivityCompat
-import com.example.mapsappwithoutdi.R
+import com.example.maps.R
+import com.example.maps.databinding.ActivityMapsBinding
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.example.mapsappwithoutdi.databinding.ActivityMapsBinding
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.Marker
 import java.io.IOException
 import kotlin.math.floor
+import kotlin.math.round
 
-class WithoutDIandVMActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+class WithoutDIAndVMActivity : AppCompatActivity(), OnMapReadyCallback,
+    GoogleMap.OnMarkerClickListener {
 
     private lateinit var mMap: GoogleMap
-    private lateinit var binding: WithoutDIandVMActivityMapsBinding
+    private lateinit var binding: ActivityMapsBinding
     private lateinit var lastLocation: Location
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
@@ -42,12 +44,12 @@ class WithoutDIandVMActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMa
         private const val EMPTY_STRING = " "
     }
 
-    var endLatitude = FIRST_LONG_AND_LAT
-    var endLongitude = FIRST_LONG_AND_LAT
-    var startLatitude = FIRST_LONG_AND_LAT
-    var startLongitude = FIRST_LONG_AND_LAT
-    var origin: MarkerOptions? = null
-    var destination: MarkerOptions? = null
+    private var endLatitude = FIRST_LONG_AND_LAT
+    private var endLongitude = FIRST_LONG_AND_LAT
+    private var startLatitude = FIRST_LONG_AND_LAT
+    private var startLongitude = FIRST_LONG_AND_LAT
+    private var origin: MarkerOptions? = null
+    private var destination: MarkerOptions? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,7 +66,7 @@ class WithoutDIandVMActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMa
         binding.btnCalculate.setOnClickListener {
 
             binding.tvKm.visibility = View.VISIBLE
-            binding.tvWithCar.visibility = View.VISIBLE
+            binding.tvCarMessage.visibility = View.VISIBLE
             binding.tvTime.visibility = View.VISIBLE
             binding.tvDistance.visibility = View.VISIBLE
 
@@ -76,7 +78,7 @@ class WithoutDIandVMActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMa
             if (location != EMPTY_STRING) {
                 val geocoder = Geocoder(applicationContext)
                 try {
-                    addressList = geocoder.getFromLocationName(location!!, MAX_ADDRESS_RESULT)
+                    addressList = geocoder.getFromLocationName(location, MAX_ADDRESS_RESULT)
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
@@ -131,14 +133,14 @@ class WithoutDIandVMActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMa
         }
         mMap.isMyLocationEnabled = true
         fusedLocationClient.lastLocation.addOnSuccessListener(this) { location ->
-            location?.let {
-                lastLocation = location!!
-                val currentLatLong = LatLng(location!!.latitude, location!!.longitude)
+            location.let {
+                lastLocation = location
+                val currentLatLong = LatLng(location.latitude, location.longitude)
                 markerOnMap(currentLatLong)
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLong, CAMERA_ZOOM))
 
-                startLatitude = location!!.latitude
-                startLongitude = location!!.longitude
+                startLatitude = location.latitude
+                startLongitude = location.longitude
             }
         }
     }

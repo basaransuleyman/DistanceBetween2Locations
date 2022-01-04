@@ -27,6 +27,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         const val EMPTY_STRING = ""
         const val ZERO = 0
         const val MAX_ADDRESS_RESULT = 5
+        const val ARRAY_SIZE = 10
+        const val ONE_THOUSAND = 1000
+        const val CAMERA_ZOOM = 12f
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
